@@ -1,0 +1,163 @@
+<html><head><title>La Casa del Tesoro</title>
+ <style>
+ body {margin:0px; font-size:11pt; font-family:Chalkboard, Comic Sans MS, Comic Sans, TSCu_Comic; background:black;}
+ .look {position:relative;height:80px; font-size:16pt;font-family:Tempus Sans ITC, Tempus Sans, Purisa, Verdana; background:black; color:white;padding:10px;}
+ .see {font-size:18pt;font-family:Tempus Sans ITC, Tempus Sans, Purisa, Verdana; background:black; color:yellow;padding:10px;}
+ .go {font-family:Tempus Sans ITC, Tempus Sans, Purisa, Verdana; background:navy; color:#66ccff;padding:10px;}
+ a {color: white}
+ .inv {font-family:Tempus Sans ITC, Tempus Sans, Purisa, Verdana; background:white; color:navy;padding:10px;border:solid 2px black;}
+ .inv a {color:red;font-weight:bold;}
+ .score {font-size:18pt;font-family:Tempus Sans ITC, Tempus Sans, Purisa, Verdana; background:black; color:yellow;padding:10px;text-align:right;}
+ h1 {padding-left:10px;background:#fff;color:#000;}
+ </style>
+ </head><body>
+ <h1>La Casa del Tesoro</h1>
+ <div id="game"><div class="score" id="score">PUNTEGGIO: 0</div><div class="look">Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.</div><div class="see">Qui vedi: <a href="#" onclick="grab(room[&quot;fuori&quot;],&quot;avviso&quot;);return false;">[avviso]</a> </div><div class="go">Da qui puoi andare a: <a href="#" onclick="play(room[&quot;ingresso&quot;]);return false;">[ingresso]</a> </div><div class="inv">I tuoi oggetti: </div></div>
+ <script>
+ var $=function(n){return document.getElementById(n)}
+ var room=[];
+
+room['fuori']={};
+ 						room['fuori'].name="fuori";
+ 						room['fuori'].look="Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.";
+ 						room['fuori'].content=['avviso'];
+ 						room['fuori'].exits=['ingresso'];
+
+room['ingresso']={};
+ 						room['ingresso'].name="ingresso";
+ 						room['ingresso'].look="Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.";
+ 						room['ingresso'].content=[''];
+ 						room['ingresso'].exits=['cucina','cantina','fuori'];
+
+room['cucina']={};
+ 						room['cucina'].name="cucina";
+ 						room['cucina'].look="Sei nella cucina, si sente un ottimo odore di cibo. Non ti distrarre e prendi quello che trovi nella stanza.";
+ 						room['cucina'].content=['torcia'];
+ 						room['cucina'].exits=['bagno','ingresso','scale'];
+
+room['bagno']={};
+ 						room['bagno'].name="bagno";
+ 						room['bagno'].look="Magari se ti vuoi lavare le mani ti puoi fermare qui. ";
+ 						room['bagno'].content=[''];
+ 						room['bagno'].exits=['cucina'];
+
+room['scale']={};
+ 						room['scale'].name="scale";
+ 						room['scale'].look="Sali sale che troverai il tesoro! ";
+ 						room['scale'].content=[''];
+ 						room['scale'].exits=['cucina','camera'];
+
+room['camera']={};
+ 						room['camera'].name="camera";
+ 						room['camera'].look="Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave per aprire il sottotetto! ";
+ 						room['camera'].content=[''];
+ 						room['camera'].exits=['scale'];
+
+room['sottotetto']={};
+ 						room['sottotetto'].name="sottotetto";
+ 						room['sottotetto'].look="Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave! ";
+ 						room['sottotetto'].content=['tesoro'];
+ 						room['sottotetto'].exits=['camera'];
+
+room['cantina']={};
+ 						room['cantina'].name="cantina";
+ 						room['cantina'].look="Sei nella cantina e' tutto molto buio, chissà cosa c'è qui dentro, ci vorrebbe la luce per vederci bene. ";
+ 						room['cantina'].content=[''];
+ 						room['cantina'].exits=['ingresso'];
+
+room['botola']={};
+ 						room['botola'].name="botola";
+ 						room['botola'].look="In questa piccola botola trovi una cosa molto importante, prendila!";
+ 						room['botola'].content=['chiave'];
+ 						room['botola'].exits=['cantina'];
+
+ room.items={};
+ room.curRoom;
+ room.score=0;
+ var inventory=[];
+ function grab(ob,item){
+  	inventory[item]=1;
+ 	var oc=ob.content;
+ 	for(var i=0;i<oc.length;i++){
+ 		if(oc[i]==item){
+ 			oc.splice(i,1);
+ 			break;
+ 		}
+ 	}
+ 	if(room.items[item] && room.items[item].donow){
+ 		room['items'][item]();
+ 		delete inventory[item];
+ 	}
+ 	play(ob);
+ }
+ function play(ob,n){
+ 	room.curRoom = ob;
+ 	if(n){
+ 		if(room['items'][n]){
+ 			room['items'][n]();
+ 		}else{
+ 			ob.content.push(n);
+ 			delete inventory[n];
+ 		}
+ 	}
+  	var s="<div class='score' id='score'>PUNTEGGIO: "+room.score+"</div>"
+ 	s+="<div class='look'>"+ob.look+"</div>"
+ 	s+="<div class='see'>Qui vedi: "
+ 	for(var i=0;i<ob.content.length;i++){
+ 		if(!(ob.content[i]==null || ob.content[i].replace(/s/g,"")==""))
+ 			s += "<a href='#' onclick='grab(room[\""+ob.name+"\"],\""+ob.content[i]+"\");return false;'>["+ob.content[i]+"]</a> ";
+ 	}
+ 	s+="</div>"
+ 	s+="<div class='go'>Da qui puoi andare a: "
+ 	for(var i=0;i<ob.exits.length;i++){
+ 		s += "<a href='#' onclick='play(room[\""+ob.exits[i]+"\"]);return false;'>["+ob.exits[i]+"]</a> ";
+ 	}
+ 	s+="</div>"
+ 	s+="<div class='inv'>I tuoi oggetti: "
+  	for(var i in inventory){
+ 		if(i!="foreach")
+ 		s += "<a href='#' onclick='play(room[\""+ob.name+"\"],\""+i+"\");return false;'>["+i+"]</a> ";
+ 	}
+ 	s+="</div>"
+ 	$('game').innerHTML=s;
+ }
+ 
+ room.items['chiave']=function(){
+	if(room.curRoom.name=='camera'){
+		room['camera'].look=' Hai aperto la stanza del tesoro!';
+		room['camera'].exits.push('sottotetto');
+		delete inventory['chiave'];
+		delete room['items']['chiave'];
+		room.score+=10;
+	}
+ }
+
+ room.items['torcia']=function(){
+	if(room.curRoom.name=='cantina'){
+		room['cantina'].look=' Adesso c\'è luce in cantina. ';
+		room['cantina'].exits.push('botola');
+		delete inventory['torcia'];
+		delete room['items']['torcia'];
+		room.score+=10;
+		alert('Hai scoperto una botola segreta, prova ad entrarci! ');
+	}
+ }
+
+ room.items['tesoro']=function(){
+	if(room.curRoom.name=='sottotetto'){
+		room['sottotetto'].look=' Quanti dobloni, quanti dobloni!';
+		delete inventory['tesoro'];
+		delete room['items']['tesoro'];
+		room.score+=10;
+		alert('Hai vinto! Hai scoperto il tesoro.');
+	}
+ }
+
+ room.items['avviso']=function(){
+	alert('Ciao mamma stai giocando con il nostro super gioco!');
+ }
+
+ play(room['fuori'])
+ </script>
+ 
+</body></html>
