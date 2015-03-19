@@ -1,0 +1,25 @@
+
+body {
+font-size: 20px;
+line-height: 1.45;
+}
+
+article {
+  margin: 0 auto;
+  max-width: 35em;
+  padding: 2em 0 5em 0;
+  position: relative;
+}
+
+textarea {
+  width: 100%;
+  font-size: 16px;
+  overflow:hidden;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
+iframe {
+width:100%;
+border:1px;
+}
+
