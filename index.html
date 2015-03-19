@@ -1,0 +1,345 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<title>Programmare una Avventura Testuale</title>
+	<link rel=stylesheet href="style.css">
+	<script src="game.js"></script>
+	<script src="utils.js"></script>
+</head>
+<body>
+<article>
+<h1>Programmare una Avventura Testuale</h1>
+
+<h3>Introduzione</h3>
+<p>Le avventure testuali (in inglese Interactive Fiction) sono programmi per computer che simulano un ambiente nel quale i giocatori usano comandi testuali per istruire il personaggio della storia ad interagire con l'ambiente in cui si trova. Le avventure testuali possono essere interpretate sia come un lavoro letterario che come un videogioco (fonte: wikipedia).</p>
+<p>Questa guida inizierà mostrando una semplice avventura testuale di esempio, interfaccia utente e comandi verranno introdotti in dettaglio.</p>
+<p>Nella sezione seguente della guida l'avventura di esempio verrà programmata passo per passo introducendo un semplice linguaggio di programmazione.</p>
+<p>Nella sezione finale saranno riassunti i costrutti del linguaggio di programmazione e sarà reso disponibile un ambiente di lavoro per programmare la propria avventura testuale.</p>
+
+<h3>Giochiamo con l'avventura di esempio</h3>
+<p>Questa guida è interattiva, nel senso che senza escire dalla guida - in linea con il testo - avermo a disposizione delle aree interattive per giocare o programmare.</p>
+<p>Cliccando sul bottone qui sotto "Mostra gioco" in linea con il testo si aprirà la nostra avventuara di esempio, pronta per essere giocata.</p>
+<textarea id='code1' spellcheck="false" style="display:none;">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+ambiente ingresso
+descrizione Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.
+uscite cucina, cantina, fuori
+
+ambiente cucina
+descrizione Sei nella cucina, si sente un ottimo odore di cibo. Non ti distrarre e prendi quello che trovi nella stanza.
+uscite bagno, ingresso, scale
+oggetti torcia
+
+ambiente bagno
+descrizione Magari se ti vuoi lavare le mani ti puoi fermare qui.  
+uscite cucina
+
+ambiente scale
+descrizione Sali sale che troverai il tesoro!  
+uscite cucina, camera
+
+ambiente camera
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave per aprire il sottotetto!  
+uscite scale
+
+ambiente sottotetto
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave!  
+uscite camera
+oggetti tesoro
+
+ambiente cantina
+descrizione Sei nella cantina e' tutto molto buio, chissà cosa c'è qui dentro, ci vorrebbe la luce per vederci bene. 
+uscite ingresso
+
+ambiente botola
+descrizione In questa piccola botola trovi una cosa molto importante, prendila!
+uscite cantina
+oggetti chiave
+
+oggetto chiave
+cambia camera, Hai aperto la stanza del tesoro!
+aggiungiuscite sottotetto
+punteggio 10
+elimina
+
+oggetto torcia
+cambia cantina, Adesso c'è luce in cantina. 
+messaggio Hai scoperto una botola segreta, prova ad entrarci!  
+aggiungiuscite botola
+punteggio 10
+elimina
+
+oggetto tesoro
+cambia sottotetto, Quanti dobloni, quanti dobloni!
+messaggio Hai vinto! Hai scoperto il tesoro.
+punteggio 10
+elimina
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run1">Mostra gioco</button>
+<iframe id='preview1' style="height:5px" onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run1", "code1", "preview1") </script>
+<p>Vediamo adesso come appare la nostra avventura e descrivendo quali sono i componenti dell'interfacia utente impariamo insieme quali sono i comandi che abbiamo a disposizione.</p>
+<p>Ogni avventura ha un titolo, in questo caso "La Casa del Tesoro". Appare in alto a sinistra nella schermata di gioco (scritto in nero su fondo bianco).</p>
+<p>Sotto il titolo, allineato a destra e scritto in giallo su fondo nero abbiamo il punteggio raggiunto nell'avventura (all'inizio dell'avventura il punteggio è uguale a zero).</p>
+<p>Segue una descrizione dell'ambiente nel quale ci troviamo. Nel nostro esempio la descrizione dice: "Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai."</p>
+<p>Scendendo verso il basso abbiamo una riga che inizia con "Qui vedi:" e tra parentesi troviamo gli oggetti che si trovano nell'ambiente dove siamo. Nel casso dell'esempio abbiamo un "avviso". Per presendere un oggetto è sufficiente cliccare sul testo e l'oggetto scomparirà dagli oggetti della stanza e apparirà (poco più in basso) nella lista de "I tuoi oggetti:".</p>
+<p>La penultima riga mostra la lista dei luoghi dove possiamo muoverci. Dal primo ambiente possiamo muoverci solo all'ingresso.</p>
+<p>Nell'ultima riga infine troviamo la lista degli oggetti che sono in nostro possesso. Per usare un oggetto possiamo semplicemente fare click sul suo testo.</p>
+<p>Dopo aver introdotto interfaccia e comandi è adesso il momento di giocare con l'avventura di esempio.</p>
+<p>Suggerimento 1: in una Avventura Testuale è chiave avere sotto controllo come si collegano gli ambienti via via che vengo scoperti e dove si trovano gli oggetti, tutto questo può essere documentato durante il gioco scrivendosi una mappa.</p>
+<p>Suggerimento 2: le torce aiutano a vederci al buio, le chiavi aprono le porte...</p>
+<h3>Costruiamo l'avventura di esempio</h3>
+<p>In questa sezione della guida costruiremo passo l'avventura di esempio introducendo un semplice linguaggio di programmazione. Proveremo i comandi del linguaggio in linea con il testo.</p>
+<p>La casella di testo qui sotto insieme al bottone esegui ed al preview del nostro gioco costituisce il nostro ambiente interattivo di programmazione in linea. Scriveremo i programmi nelle caselle di testo, li eseguiremo con il pulsante "Esegui" e ne vedremo il risultato nella finestra che apparirà sotto il pulsante.</p>
+<p>Partiamo dal titolo dell'avventura che vogliamo definire, nel nostro esempio "La Casa del Tesoro". Il minimo programma necessario per definire un titolo prevede il testo seguente: <code>titolo</code> La Casa del Tesoro. Ovvero con la parola chiave <code>titolo</code> seguita da uno spazio bianco e dal testo che vogliamo sia il titolo della nostra avventura. Cliccando sul pulsante esegui comparirà il titolo dell'avventura.</p>
+<textarea id='code2' spellcheck="false" rows="3">
+titolo La Casa del Tesoro
+</textarea>
+<button id="run2">Esegui</button>
+<iframe style="height:5px" id='preview2' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run2", "code2", "preview2") </script>
+<p>Alla base della progettazione di una Avventura Testuale c'è una mappa degli ambienti e degli oggetti. Qui sotto mostriamo la mappa della nostra avventura di esempio. Ci sono 9 ambienti, 2 dei quali sono nascosti, linee tratteggiate.</p>
+<p style="text-align:center"><img src="mappa.png" alt="mappa"></p>
+<p>il primo <code>ambiente</code> della nostra avventura è "fuori", ha come <code>descrizione</code> "Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.", ha come <code>uscite</code> "ingresso" ed ha come <code>oggetti</code> "avviso". Tutto questo è descritto nel modo seguente nel nostro codice di programmazione. Se clicchiamo su esegui possiamo provare il codice scritto e verificare la dscrizione gli oggetti e le uscite che abbiamo definito per l'ambiente.</p>
+<textarea id='code3' spellcheck="false" rows="8">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+</textarea>
+<button id="run3">Esegui</button>
+<iframe style="height:5px" id='preview3' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run3", "code3", "preview3") </script>
+<p>Con il codice di programmazione che abbiamo scritto fino ad adesso possiamo prendere l'oggetto avviso, ma se ci clicchiamo sopra semplicemente lo depositiamo nell'ambiente dove ci troviamo. Se vogliamo fare qualcosa con l'oggetto dobbiamo scirvere del codice di programmazione. Se ad esempio vogliamo che quando usiamo l'oggetto appaia un messaggio dobbiamo aggiungere una nuova sezione che inizia con la parola chiave <code>oggetto</code> ed è seguita dal nome dell'oggetto. Nella riga seguente possiamo inserire la parola chiave <code>messaggioglobale></code> seguita da uno spazio e dal messaggio se vogliamo che il messaggio appaia dovunque (in qualunque ambiente noi ci troviamo) quando usiamo l'oggetto.</p>
+<textarea id='code4' spellcheck="false" rows="12">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run4">Esegui</button>
+<iframe style="height:5px" id='preview4' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run4", "code4", "preview4") </script>
+<p>Aggiungiamo adesso al nostro codice di programmazione la definizione di una seconda stanza. La stanza "ingresso". Dalla mappa ci accorgiamo che ingresso ha 3 uscite: cucina, cantina e fuori. Il codice qui sotto include la definizione di questa nuova stanza e dovrebbe essere chiaro con tutto quello che abbiamo introdotto in precedenza.</p>
+<textarea id='code5' spellcheck="false" rows="17">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+ambiente ingresso
+descrizione Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.
+uscite cucina, cantina, fuori
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run5">Esegui</button>
+<iframe style="height:5px" id='preview5' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run5", "code5", "preview5") </script>
+<p>Adesso possiamo aggiungere anche tutti gli altri ambienti che abbiamo nella mappa, inlcusi quelli nascosti, ma senza dichiarare le uscite nascoste (passaggi tratteggiati nella mappa).</p>
+<textarea id='code6' spellcheck="false" rows="50">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+ambiente ingresso
+descrizione Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.
+uscite cucina, cantina, fuori
+
+ambiente cucina
+descrizione Sei nella cucina, si sente un ottimo odore di cibo. Non ti distrarre e prendi quello che trovi nella stanza.
+uscite bagno, ingresso, scale
+oggetti torcia
+
+ambiente bagno
+descrizione Magari se ti vuoi lavare le mani ti puoi fermare qui.  
+uscite cucina
+
+ambiente scale
+descrizione Sali sale che troverai il tesoro!  
+uscite cucina, camera
+
+ambiente camera
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave per aprire il sottotetto!  
+uscite scale
+
+ambiente sottotetto
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave!  
+uscite camera
+oggetti tesoro
+
+ambiente cantina
+descrizione Sei nella cantina e' tutto molto buio, chissà cosa c'è qui dentro, ci vorrebbe la luce per vederci bene. 
+uscite ingresso
+
+ambiente botola
+descrizione In questa piccola botola trovi una cosa molto importante, prendila!
+uscite cantina
+oggetti chiave
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run6">Esegui</button>
+<iframe style="height:5px" id='preview6' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run6", "code6", "preview6") </script>
+<p>La parte più interessante nella progettazione delle nostre avventure è quella di aggiungere dinamicità alla storia. Per poter fare questo possiamo introdurre delle proprietà speciali agli oggetti quando vengono utilizzati in particolari ambienti. Nella nostra avventura di esempio la torcia che si trova in cucina se viene usata in cantina permette di vedere la botola e quindi "libera" una nuova uscita. Tutto questo si descrive nel nostro linguaggio di programmazione con le parole chiave <code>aggiungiuscite</code> uno spazio e le nuove uscite introdotte, <code>cambia</code> uno spazio e la nuova descrizione dell'ambiente dopo l'uso dell'oggetto, <code>messaggio</code> uno spazio e un messaggio che vogliamo scrivere al giocatore, <code>punteggio</code> uno spazio e un numero per i punti che vogliamo dare al giocatore per aver usato l'oggetto nell'ambiente giusto, infine la parola chiave <code>elimina</code> se vogliamo che l'oggetto sia monouso.</p>
+<textarea id='code7' spellcheck="false" rows="50">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+ambiente ingresso
+descrizione Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.
+uscite cucina, cantina, fuori
+
+ambiente cucina
+descrizione Sei nella cucina, si sente un ottimo odore di cibo. Non ti distrarre e prendi quello che trovi nella stanza.
+uscite bagno, ingresso, scale
+oggetti torcia
+
+ambiente bagno
+descrizione Magari se ti vuoi lavare le mani ti puoi fermare qui.  
+uscite cucina
+
+ambiente scale
+descrizione Sali sale che troverai il tesoro!  
+uscite cucina, camera
+
+ambiente camera
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave per aprire il sottotetto!  
+uscite scale
+
+ambiente sottotetto
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave!  
+uscite camera
+oggetti tesoro
+
+ambiente cantina
+descrizione Sei nella cantina e' tutto molto buio, chissà cosa c'è qui dentro, ci vorrebbe la luce per vederci bene. 
+uscite ingresso
+
+ambiente botola
+descrizione In questa piccola botola trovi una cosa molto importante, prendila!
+uscite cantina
+oggetti chiave
+
+oggetto torcia
+cambia cantina, Adesso c'è luce in cantina. 
+messaggio Hai scoperto una botola segreta, prova ad entrarci!  
+aggiungiuscite botola
+punteggio 10
+elimina
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run7">Esegui</button>
+<iframe style="height:5px" id='preview7' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run7", "code7", "preview7") </script>
+<p>Senza introdurre nuovi concetti possiamo completare la definizione della nostra avventura di esempio descrivendo gli ultimi due oggetti che mancavano: la chiave e il tesoro. Qui sotto abbiamo il codice dell'avventura completa.</p>
+<textarea id='code8' spellcheck="false" rows="50">
+titolo La Casa del Tesoro
+
+ambiente fuori
+descrizione Questa casa sembra misteriosa, nasconde un grandissimo tesoro. Cerca dentro e lo troverai.
+uscite ingresso
+oggetti avviso
+
+ambiente ingresso
+descrizione Ti trovi nell'ingresso della casa, da qui puoi andare un po' dappertutto.
+uscite cucina, cantina, fuori
+
+ambiente cucina
+descrizione Sei nella cucina, si sente un ottimo odore di cibo. Non ti distrarre e prendi quello che trovi nella stanza.
+uscite bagno, ingresso, scale
+oggetti torcia
+
+ambiente bagno
+descrizione Magari se ti vuoi lavare le mani ti puoi fermare qui.  
+uscite cucina
+
+ambiente scale
+descrizione Sali sale che troverai il tesoro!  
+uscite cucina, camera
+
+ambiente camera
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave per aprire il sottotetto!  
+uscite scale
+
+ambiente sottotetto
+descrizione Sei vicinissima al tesoro, ti manca solo un passo se hai la chiave!  
+uscite camera
+oggetti tesoro
+
+ambiente cantina
+descrizione Sei nella cantina e' tutto molto buio, chissà cosa c'è qui dentro, ci vorrebbe la luce per vederci bene. 
+uscite ingresso
+
+ambiente botola
+descrizione In questa piccola botola trovi una cosa molto importante, prendila!
+uscite cantina
+oggetti chiave
+
+oggetto chiave
+cambia camera, Hai aperto la stanza del tesoro!
+aggiungiuscite sottotetto
+punteggio 10
+elimina
+
+oggetto torcia
+cambia cantina, Adesso c'è luce in cantina. 
+messaggio Hai scoperto una botola segreta, prova ad entrarci!  
+aggiungiuscite botola
+punteggio 10
+elimina
+
+oggetto tesoro
+cambia sottotetto, Quanti dobloni, quanti dobloni!
+messaggio Hai vinto! Hai scoperto il tesoro.
+punteggio 10
+elimina
+
+oggetto avviso
+messaggioglobale Ciao mamma stai giocando con il nostro super gioco!
+</textarea>
+<button id="run7">Esegui</button>
+<iframe style="height:5px" id='preview8' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run8", "code8", "preview8") </script>
+<p>Adesso siamo pronti per programmare una avventuara testuale tutta nostra. Ma prima di mostrare lavorare in un nostro spazio di lavoro tutto vuoto riassumiamo qui sotto tutti i comandi del nostro linguaggio di programmazione per avventure testuali.</p>
+<p style="text-align:center"><img src="linguaggio.png" alt="linguaggio"></p>
+<p>Ed ecco infine qui sotto una spazio di lavoro vuoto pronto per la creazione di una nuova avventura con il nuovo linguaggio che abbiamo appena imparato.</p>
+<textarea id='code8' spellcheck="false" rows="5">
+
+</textarea>
+<button id="run8">Esegui</button>
+<iframe style="height:5px" id='preview8' onload='javascript:resizeIframe(this);'></iframe>
+<script> ROOM("run8", "code8", "preview8") </script>
+</article>
+</body>
+</html>
